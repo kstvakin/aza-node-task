@@ -1,0 +1,13 @@
+export const SEQUELIZE = 'SEQUELIZE';
+export const DEVELOPMENT = 'development';
+export const TEST = 'test';
+export const PRODUCTION = 'production';
+export const TRANSACTION_REPOSITORY = 'TRANSACTION_REPOSITORY';
+export const CUSTOMER_REPOSITORY = 'CUSTOMER_REPOSITORY';
+export const SUCCESS = '00';
+export const FORBIDDEN = '02';
+export const BADREQUEST = '01';
+export const UNAUTHORIZED = '03';
+export const FAILED = '04';
+export const BADGATEWAY = '05';
+export const INTERNALSERVERERROR = '99';
