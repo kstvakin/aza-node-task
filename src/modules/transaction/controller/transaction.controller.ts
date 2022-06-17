@@ -1,5 +1,5 @@
-import {Body, Controller, Get, Post, Req, Res} from '@nestjs/common';
-import {TransactionDto} from "../dto/transaction.dto";
+import {Body, Controller, Get, Post, Put, Req, Res} from '@nestjs/common';
+import {TransactionDto, UpdateRecordDto} from "../dto/transaction.dto";
 import {TransactionService} from "../service/transaction.service";
 import {transactionResponse} from "../interface/interface";
 import {ResponseService} from "../../../core/traits";
@@ -38,6 +38,18 @@ export class TransactionController {
     async list(@Res() res, @Req() req) {
         try {
             const resp:transactionResponse =  await this.trnxService.fetchARecord(req.params.id);
+            return res.status(200)
+                .json(this.resSrv.success(resp))
+        }catch(error){
+            return res.status((error.status || error.response.status) ?? 500)
+                .json(this.resSrv.error(error))
+        }
+    }
+
+    @Put('list/:id')
+    async update(@Body() RequestBody: UpdateRecordDto, @Res() res, @Req() req) {
+        try {
+            const resp:transactionResponse =  await this.trnxService.updateARecord(RequestBody, req.params.id);
             return res.status(200)
                 .json(this.resSrv.success(resp))
         }catch(error){

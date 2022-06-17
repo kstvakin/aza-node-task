@@ -12,3 +12,10 @@ export interface transactionRecord {
     ocurrency: number;
     customerId: number;
 }
+
+export interface updateRecord {
+    iamount : number;
+    icurrency : string;
+    oamount: number;
+    id: number;
+}

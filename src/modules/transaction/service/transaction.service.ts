@@ -4,7 +4,7 @@ import {Logger} from "winston";
 import Transaction from "../../../core/entities/transaction.entity";
 import Customer from "../../../core/entities/customer.entity";
 import {CUSTOMER_REPOSITORY, FAILED, SUCCESS, TRANSACTION_REPOSITORY} from "../../../core/constants";
-import {TransactionDto} from "../dto/transaction.dto";
+import {TransactionDto, UpdateRecordDto} from "../dto/transaction.dto";
 import {transactionResponse} from "../interface/interface";
 import {TransactionLists, CustomerLists} from "../service/pattern";
 import {GoogleApiService} from "../../googleapi/googleapi.service";
@@ -92,6 +92,34 @@ export class TransactionService {
             const lists = new TransactionLists(this.trxRepo);
             const record = await lists.fetchList(id);
             const message = record ? 'record fetched successfully' : 'record not found';
+            let response: transactionResponse = {
+                status: !!record,
+                resp_code: record ? SUCCESS : FAILED,
+                message,
+                ...(record && {data:record})
+            };
+
+            return response;
+
+        } catch (error) {
+            this.logger.error(error);
+            throw new HttpException('Oops! something went wrong', HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    async updateARecord(data:UpdateRecordDto, id:number): Promise<transactionResponse> {
+        try {
+
+            const lists = new TransactionLists(this.trxRepo);
+            const transactionRecord = await lists.fetchList(id);
+            const resp : any = await this.googleapi.convert(data.amount, data.currency.toUpperCase(), transactionRecord.ocurrency);
+            const record = await lists.updateList({
+                iamount:data.amount,
+                icurrency:data.currency.toUpperCase(),
+                oamount:resp.data.result,
+                id
+            });
+            const message = 'record updated successfully';
             let response: transactionResponse = {
                 status: !!record,
                 resp_code: record ? SUCCESS : FAILED,

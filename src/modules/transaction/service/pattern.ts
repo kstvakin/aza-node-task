@@ -1,33 +1,42 @@
-import {transactionRecord} from "../interface/interface";
+import {transactionRecord, updateRecord} from "../interface/interface";
 import Customer from "../../../core/entities/customer.entity";
 import Transaction from "../../../core/entities/transaction.entity";
 
 export const TransactionLists : any = function(model){
     this.model = model;
     this.fetchLists = async (query?): Promise<Transaction[]> => {
-        let pageSize = Number(query.limit) || 10;
-        pageSize = pageSize > 200 ? 200 : pageSize;
-        const page = Number(query.page) || 1;
-        const offset = (pageSize * page) - pageSize;
         return await this.model.findAll({
-            attributes:['iamount','icurrency','oamount','ocurrency','createdAt'],
-            limit: pageSize,
+            attributes:['id','iamount','icurrency','oamount','ocurrency','createdAt'],
             order:[
                 ['createdAt', 'DESC']
-            ],
-            offset
+            ]
         });
     };
     this.fetchList = async (id:number): Promise<Transaction> => {
         return await this.model.findOne({
             where:{
-                customerId:id
+                id
             },
-            attributes:['iamount','icurrency','oamount','ocurrency','createdAt']
+            attributes:['id','iamount','icurrency','oamount','ocurrency','createdAt']
         });
     };
     this.createList = async (data:transactionRecord) => {
         return await this.model.create(data);
+    };
+    this.updateList = async (data:updateRecord): Promise<any> => {
+        await this.model.update(
+            {
+                iamount:data.iamount,
+                icurrency:data.icurrency,
+                oamount:data.oamount
+            },
+            {
+                where: { id: data.id},
+            }
+
+        );
+
+        return data;
     };
 }
 
