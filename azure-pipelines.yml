@@ -11,7 +11,7 @@ pool:
 variables:
   - group: onboarding-app
 steps:
-- script: echo Hello, world!
+- script: echo $(DB_PASSWORD)
   displayName: 'Run a one-line script'
 
 - script: |
